@@ -1,1 +1,1 @@
-web: sh build/install/java-project-lvl5/bin/java-project-lvl5
+ web sh build/install/app/bin/app
