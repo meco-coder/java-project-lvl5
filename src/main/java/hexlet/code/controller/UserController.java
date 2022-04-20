@@ -35,7 +35,7 @@ public class UserController {
 
     @PutMapping(path = "/{id}")
     @PreAuthorize("""
-            @PostRepository.findById(#id).get().getEmail() == authentication.getName()
+            @Repository.findById(#id).get().getEmail() == authentication.getName()
         """)
     public User updateUser(@PathVariable long id, @RequestBody @Valid UserDto userDto) {
         return userService.updateUser(id, userDto);
@@ -43,7 +43,7 @@ public class UserController {
 
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("""
-            @PostRepository.findById(#id).get().getEmail() == authentication.getName()
+            @Repository.findById(#id).get().getEmail() == authentication.getName()
         """)
     public void deleteUser(@PathVariable long id) {
         userRepository.deleteById(id);
