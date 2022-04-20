@@ -1,7 +1,8 @@
 package hexlet.code.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -11,41 +12,37 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.*;
 
 import java.util.Date;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
 
-    @Getter
-    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private long id;
 
-    @Getter
-    @Setter
-    @Column(nullable = false)
+    @NotBlank
     private String firstName;
 
-    @Getter
-    @Setter
-    @Column(nullable = false)
+    @NotBlank
     private String lastName;
 
-    @Getter
-    @Setter
-    @Column(nullable = false)
+    @Email
+    @Column(unique = true)
     private String email;
 
-    @Getter
-    @Setter
-    @Column(nullable = false)
+    @JsonIgnore
+    @NotBlank
     private String password;
 
-    @Getter
-    @Setter
+    @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date cratedAt;
 

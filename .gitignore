@@ -10,3 +10,6 @@ build
 /suppressions.xml
 xsl/
 /lib/
+node
+fronetend/build
+frontend/node_modules

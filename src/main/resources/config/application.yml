@@ -1,6 +1,8 @@
 server:
   port: ${PORT:5000}
 
+base-url: /api
+
 spring:
   profiles:
     active: dev
@@ -13,3 +15,7 @@ mvc:
   hiddenmethod:
     filter:
       enabled: true
+
+jwt:
+  sessionTime: 120000000
+  secret: secret_key

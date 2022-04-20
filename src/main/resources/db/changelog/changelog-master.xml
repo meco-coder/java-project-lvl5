@@ -1,23 +1,27 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <changeSet author="ivan (generated)" id="1649755233633-1">
-        <createTable tableName="users">
-            <column autoIncrement="true" name="id" type="INT">
-                <constraints primaryKey="true" primaryKeyName="usersPK"/>
+    <changeSet author="ivan (generated)" id="1650394160599-1">
+        <createTable tableName="TASK_STATUS">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="TASK_STATUSPK"/>
             </column>
-            <column name="crated_at" type="TIMESTAMP"/>
-            <column name="email" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="first_name" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="last_name" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="password" type="VARCHAR(255)">
-                <constraints nullable="false"/>
-            </column>
+            <column name="CREATED_AT" type="TIMESTAMP"/>
+            <column name="NAME" type="VARCHAR(255)"/>
         </createTable>
+    </changeSet>
+    <changeSet author="ivan (generated)" id="1650394160599-2">
+        <createTable tableName="USERS">
+            <column autoIncrement="true" name="ID" type="BIGINT">
+                <constraints primaryKey="true" primaryKeyName="USERSPK"/>
+            </column>
+            <column name="CRATED_AT" type="TIMESTAMP"/>
+            <column name="EMAIL" type="VARCHAR(255)"/>
+            <column name="FIRST_NAME" type="VARCHAR(255)"/>
+            <column name="LAST_NAME" type="VARCHAR(255)"/>
+            <column name="PASSWORD" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="ivan (generated)" id="1650394160599-3">
+        <addUniqueConstraint columnNames="EMAIL" constraintName="UC_USERSEMAIL_COL" tableName="USERS"/>
     </changeSet>
 </databaseChangeLog>
