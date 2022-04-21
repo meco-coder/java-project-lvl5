@@ -45,6 +45,7 @@ public class Task {
     @JoinColumn(name="executor_id")
     private User executor;
 
+
     @ManyToMany()
     private List<Label> labels;
 

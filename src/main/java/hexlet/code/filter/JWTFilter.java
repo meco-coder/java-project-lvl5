@@ -1,7 +1,7 @@
 package hexlet.code.filter;
 
 import hexlet.code.service.JWTUtil;
-import hexlet.code.service.UserServiceImpl;
+import hexlet.code.service.impl.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

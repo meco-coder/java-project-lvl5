@@ -38,6 +38,7 @@ dependencies {
     implementation 'com.rollbar:rollbar-spring-boot-webmvc:1.8.1'
     implementation 'io.jsonwebtoken:jjwt:0.9.1'
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.7'
+    implementation 'com.rollbar:rollbar-spring-boot-webmvc:1.8.1'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor(

@@ -1,18 +1,16 @@
 package hexlet.code.controller;
 
+import hexlet.code.exception.UnprocessableEntityException;
 import hexlet.code.dto.LabelDto;
 import hexlet.code.model.Label;
-import hexlet.code.model.Task;
 import hexlet.code.repository.LabelRepository;
 import hexlet.code.service.LabelService;
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "${base-url}" + "/labels")
@@ -48,12 +46,13 @@ public class LabelController {
 
 
     @DeleteMapping(path = "/{id}")
-    public void deleteLabel(@PathVariable long id) {
-        List<Task> ss = labelRepository.findById(id).get().getTasks();
-        if (!labelRepository.findById(id).get().getTasks().isEmpty()) {
-            throw new NotImplementedException("Метка имеет одну из задач, её нельзя удалить");
+    public void deleteLabel(@PathVariable long id) throws UnprocessableEntityException {
+
+        try {
+            labelRepository.deleteById(id);
+        } catch (Exception e) {
+            throw new UnprocessableEntityException("Нельзя удалить");
         }
-        labelRepository.deleteById(id);
     }
 
 

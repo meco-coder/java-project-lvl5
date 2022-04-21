@@ -1,8 +1,9 @@
-package hexlet.code.service;
+package hexlet.code.service.impl;
 
 import hexlet.code.dto.TaskStatusDto;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
+import hexlet.code.service.TaskStatusService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ import java.util.List;
 @Service
 @Transactional
 @AllArgsConstructor
-public class TaskStatusServiceImpl implements TaskStatusService{
+public class TaskStatusServiceImpl implements TaskStatusService {
 
     @Autowired
     TaskStatusRepository taskStatusRepository;
