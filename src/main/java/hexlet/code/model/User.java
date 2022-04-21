@@ -1,20 +1,15 @@
 package hexlet.code.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -42,9 +37,17 @@ public class User {
     @NotBlank
     private String password;
 
+    @JsonBackReference
+    @OneToMany(mappedBy = "author")
+    private List<Task> authorTasks;
+
+    @JsonBackReference
+    @OneToMany(mappedBy = "executor")
+    private List<Task> executorTasks;
+
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
-    private Date cratedAt;
+    private Date createdAt;
 
 
 }

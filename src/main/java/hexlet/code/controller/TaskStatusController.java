@@ -5,6 +5,7 @@ import hexlet.code.dto.TaskStatusDto;
 import hexlet.code.model.TaskStatus;
 import hexlet.code.repository.TaskStatusRepository;
 import hexlet.code.service.TaskStatusServiceImpl;
+import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -46,6 +47,11 @@ public class TaskStatusController {
 
     @DeleteMapping(path = "/{id}")
     public void deleteTaskStatus(@PathVariable long id) {
-        taskStatusRepository.delete(taskStatusRepository.findById(id).get());
+
+        if (!taskStatusRepository.findById(id).get().getTasks().isEmpty()) {
+            throw new NotImplementedException("Статус имеет одну из задач, его нельзя удалить");
+        }
+
+        taskStatusRepository.deleteById(id);
     }
 }

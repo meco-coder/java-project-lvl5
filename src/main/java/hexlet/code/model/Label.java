@@ -1,7 +1,9 @@
 package hexlet.code.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
@@ -10,12 +12,12 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "task_statuses")
+@Table(name = "labels")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class TaskStatus {
+public class Label {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,13 +26,10 @@ public class TaskStatus {
     @NotBlank
     private String name;
 
-    @JsonBackReference
-    @OneToMany(mappedBy = "taskStatus")
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Task> tasks;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-
-
 }

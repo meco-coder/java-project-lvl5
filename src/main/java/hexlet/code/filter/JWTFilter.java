@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 @Component
 public class JWTFilter extends OncePerRequestFilter {
 
@@ -33,6 +35,7 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
+
 
         final String authorizationHeader = request.getHeader("Authorization");
 

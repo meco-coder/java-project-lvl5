@@ -11,4 +11,9 @@ public interface UserService {
     User createNewUser(UserDto userDto) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
     User updateUser(long id, UserDto userDto);
+
+    String getCurrentUserName();
+
+    User getCurrentUser();
+
 }

@@ -20,6 +20,7 @@ public class LoginController {
     @Autowired
     private JWTUtil jwtTokenUtil;
 
+
     @PostMapping("")
     public String createAuthenticationToken(@RequestBody LoginDto loginDto) {
         Authentication authentication;
