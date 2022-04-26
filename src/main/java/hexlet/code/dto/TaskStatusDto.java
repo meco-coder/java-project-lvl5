@@ -15,6 +15,6 @@ import javax.validation.constraints.Size;
 public class TaskStatusDto {
 
     @NotBlank
-    @Size(min = 1, max = 15)
+    @Size(min = 1, max = 100)
     private String name;
 }
