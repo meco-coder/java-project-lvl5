@@ -1,102 +1,101 @@
 package hexlet.code.config.security;
 
-
-import hexlet.code.filter.JWTFilter;
-import hexlet.code.repository.UserRepository;
-import hexlet.code.service.impl.UserServiceImpl;
+import hexlet.code.component.JWTHelper;
+import hexlet.code.filter.JWTAuthenticationFilter;
+import hexlet.code.filter.JWTAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
+import java.util.List;
+
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private UserRepository userRepo;
-    private UserServiceImpl userDetailsService;
+    public static final String LOGIN = "/login";
+
+    public static final List<GrantedAuthority> DEFAULT_AUTHORITIES = List.of(new SimpleGrantedAuthority("USER"));
+
+    private final RequestMatcher publicUrls;
+    private final RequestMatcher loginRequest;
+    private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    private final JWTHelper jwtHelper;
     @Autowired
     private AuthenticationEntryPoint authenticationEntryPoint;
-    @Autowired
-    private JWTFilter jwtFilter;
 
-    public SecurityConfig(@Lazy UserServiceImpl userDetailsService) {
+    public SecurityConfig(@Value("${base-url}") final String baseUrl,
+                          final UserDetailsService userDetailsService,
+                          final PasswordEncoder passwordEncoder, final JWTHelper jwtHelper) {
+        this.loginRequest = new AntPathRequestMatcher(baseUrl + LOGIN, POST.toString());
+        this.publicUrls = new OrRequestMatcher(
+                loginRequest,
+                new AntPathRequestMatcher(baseUrl + "/users/**", POST.toString()),
+                new AntPathRequestMatcher(baseUrl + "/users/**", GET.toString()),
+                new AntPathRequestMatcher(baseUrl + "/statuses/**", GET.toString()),
+                new AntPathRequestMatcher(baseUrl + "/tasks/**", GET.toString()),
+                new NegatedRequestMatcher(new AntPathRequestMatcher(baseUrl + "/**"))
+        );
         this.userDetailsService = userDetailsService;
-    }
-
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+        this.passwordEncoder = passwordEncoder;
+        this.jwtHelper = jwtHelper;
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService).
-                passwordEncoder(passwordEncoder());
+    protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService)
+                .passwordEncoder(passwordEncoder);
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+    public void configure(final HttpSecurity http) throws Exception {
 
-        http.headers().frameOptions().disable();
+        final var authenticationFilter = new JWTAuthenticationFilter(
+                authenticationManagerBean(),
+                loginRequest,
+                jwtHelper
+        );
 
-        http.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint);
+        final var authorizationFilter = new JWTAuthorizationFilter(
+                publicUrls,
+                jwtHelper
+        );
 
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "/api/login").permitAll();
-
-        http.authorizeRequests().antMatchers("/api/users").permitAll()
-                .and().authorizeRequests().antMatchers(HttpMethod.PUT, "/api/users/**")
-                .hasAnyAuthority("USER")
-                .and().authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/users/**")
-                .hasAnyAuthority("USER");
-
-        http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/statuses/**").permitAll()
-                .and().authorizeRequests().antMatchers(HttpMethod.POST, "/api/statuses/**")
-                .hasAuthority("USER")
-                .and().authorizeRequests().antMatchers(HttpMethod.PUT, "/api/statuses/**")
-                .hasAnyAuthority("USER")
-                .and().authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/statuses/**")
-                .hasAuthority("USER");
-
-        http.authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/api/tasks/**").permitAll()
-                .and().authorizeRequests().antMatchers(HttpMethod.POST, "/api/tasks/**")
-                .hasAuthority("USER")
-                .and().authorizeRequests().antMatchers(HttpMethod.PUT, "/api/tasks/**")
-                .hasAnyAuthority("USER")
-                .and().authorizeRequests().antMatchers(HttpMethod.DELETE, "/api/tasks/**")
-                .hasAuthority("USER");
-
-        http.authorizeRequests().antMatchers("/api/labels/**").hasAuthority("USER");
-
-
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
-        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-
+        http.csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(authenticationEntryPoint)
+                .and()
+                .headers().frameOptions().disable()
+                .and()
+                .authorizeRequests()
+                .requestMatchers(publicUrls).permitAll()
+                .anyRequest().authenticated()
+                .and()
+                .addFilter(authenticationFilter)
+                .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement().disable()
+                .formLogin().disable()
+                .httpBasic().disable()
+                .logout().disable();
     }
-
 }
+

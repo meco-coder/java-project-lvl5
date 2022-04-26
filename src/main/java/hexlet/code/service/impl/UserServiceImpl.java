@@ -19,6 +19,8 @@ import javax.transaction.Transactional;
 
 import java.util.List;
 
+import static hexlet.code.config.security.SecurityConfig.DEFAULT_AUTHORITIES;
+
 @Service
 @Transactional
 @AllArgsConstructor
@@ -76,7 +78,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         return new org.springframework.security.core.userdetails.User(user.getEmail(),
                 user.getPassword(),
                 authorities);
+    }
 
+    private UserDetails buildSpringUser(final User user) {
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                DEFAULT_AUTHORITIES
+        );
     }
 
 

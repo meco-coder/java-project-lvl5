@@ -1,12 +1,16 @@
 package hexlet.code.dto;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 
-@Data
+@Builder
+@Setter
+@Getter
 public class TaskDto {
 
     @Size(min = 1, max = 100)

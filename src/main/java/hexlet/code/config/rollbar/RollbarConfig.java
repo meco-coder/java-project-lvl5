@@ -7,23 +7,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 
 @Configuration
-@EnableWebMvc
 @ComponentScan({
-
-// UPDATE TO YOUR PROJECT PACKAGE
     "hexlet.code",
         "com.rollbar.spring"
-
-
 })
 public class RollbarConfig {
 
-    // Добавляем токен через переменные окружения
-    @Value("${ROLLBAR_TOKEN}")
+    @Value("${ROLLBAR_TOKEN:0fd5315b677040d78d8b60ec5dc8f056}")
     private String rollbarToken;
 
     @Value("${spring.profiles.active:}")
@@ -41,9 +34,10 @@ public class RollbarConfig {
     private Config getRollbarConfigs(String accessToken) {
 
     return RollbarSpringConfigBuilder.withAccessToken(accessToken)
-            .environment("dev")
+            .environment("development")
             .enabled(activeProfile == "prod")
             .build();
     }
+
 
 }

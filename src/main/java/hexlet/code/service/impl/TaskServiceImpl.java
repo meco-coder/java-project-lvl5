@@ -36,7 +36,7 @@ public class TaskServiceImpl implements TaskService {
     private LabelRepository labelRepository;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
 
     @Override

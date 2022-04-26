@@ -1,10 +1,22 @@
 package hexlet.code.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -17,6 +29,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Task {
 
     @Id
@@ -28,21 +41,18 @@ public class Task {
 
     private String description;
 
-    @JsonManagedReference
     @NotNull
     @ManyToOne
-    @JoinColumn(name="task_status_id")
+    @JoinColumn(name = "task_status_id")
     private TaskStatus taskStatus;
 
-    @JsonManagedReference
     @NotNull
     @ManyToOne
-    @JoinColumn(name="author_id")
+    @JoinColumn(name = "author_id")
     private User author;
 
-    @JsonManagedReference
     @ManyToOne
-    @JoinColumn(name="executor_id")
+    @JoinColumn(name = "executor_id")
     private User executor;
 
 

@@ -17,10 +17,10 @@ import java.util.List;
 public class TaskStatusServiceImpl implements TaskStatusService {
 
     @Autowired
-    TaskStatusRepository taskStatusRepository;
+    private TaskStatusRepository taskStatusRepository;
 
     @Override
-    public TaskStatus createNewTaskStatus(TaskStatusDto taskStatusDto){
+    public TaskStatus createNewTaskStatus(TaskStatusDto taskStatusDto) {
         final TaskStatus taskStatus = new TaskStatus();
         taskStatus.setName(taskStatusDto.getName());
         taskStatusRepository.save(taskStatus);
