@@ -1,6 +1,7 @@
 package hexlet.code.controller;
 
 import hexlet.code.dto.UserDto;
+import hexlet.code.model.Label;
 import hexlet.code.model.User;
 import hexlet.code.repository.UserRepository;
 import hexlet.code.service.UserService;
@@ -47,6 +48,16 @@ public class UserController {
     @GetMapping(path = "")
     public Iterable<User> getUsers() {
         return userRepository.findAll();
+    }
+
+    @Operation(summary = "Get user by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "user found"),
+            @ApiResponse(responseCode = "500", description = "user with that id not found")
+    })
+    @GetMapping(path = "/{id}")
+    public User getUser(@Parameter(description = "User id") @PathVariable final long id) {
+        return userRepository.findById(id).get();
     }
 
     @Operation(summary = "Create new user")
