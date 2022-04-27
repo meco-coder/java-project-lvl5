@@ -41,31 +41,31 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    @Operation(summary = "Get all tasks with predicate")
+    @Operation(summary = "Get all Tasks with predicate")
     @ApiResponses(@ApiResponse(responseCode = "200", content =
     @Content(schema = @Schema(implementation = Task.class))
     ))
     @GetMapping(path = "")
-    public Iterable<Task> getTasks(@Parameter(description = "Predicate for tasks")
+    public Iterable<Task> getTasks(@Parameter(description = "Predicate for Task")
                                    @QuerydslPredicate(root = Task.class) Predicate predicate) {
         return taskRepository.findAll(predicate);
     }
 
-    @Operation(summary = "Get task by id")
+    @Operation(summary = "Get Task by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "task found"),
-            @ApiResponse(responseCode = "404", description = "task with that id not found")
+            @ApiResponse(responseCode = "200", description = "Task found"),
+            @ApiResponse(responseCode = "404", description = "Task with that id not found")
     })
     @GetMapping(path = "/{id}")
-    public Task getTask(@Parameter(description = "task id") @PathVariable final long id) {
+    public Task getTask(@Parameter(description = "Task id") @PathVariable final long id) {
         return taskRepository.findById(id).get();
     }
 
     @SecurityRequirement(name = "java_project")
     @Operation(summary = "Create new task")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User created"),
-            @ApiResponse(responseCode = "422", description = "incorrect User data"),
+            @ApiResponse(responseCode = "201", description = "Task created"),
+            @ApiResponse(responseCode = "422", description = "incorrect Task data"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @PostMapping(path = "")
@@ -76,23 +76,23 @@ public class TaskController {
     }
 
     @SecurityRequirement(name = "java_project")
-    @Operation(summary = "Update task by id")
+    @Operation(summary = "Update Task by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "task updated"),
-            @ApiResponse(responseCode = "422", description = "incorrect task data"),
+            @ApiResponse(responseCode = "200", description = "Task updated"),
+            @ApiResponse(responseCode = "422", description = "incorrect Task data"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Task not found")
     })
     @PutMapping(path = "/{id}")
-    public Task updateTask(@Parameter(description = "Id task to update") @PathVariable final long id,
+    public Task updateTask(@Parameter(description = "Id Task to update") @PathVariable final long id,
                            @Parameter(description = "Task data to update") @RequestBody @Valid TaskDto taskDto) {
         return taskService.updateTask(id, taskDto);
     }
 
     @SecurityRequirement(name = "java_project")
-    @Operation(summary = "Delete task by id")
+    @Operation(summary = "Delete Task by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "task deleted"),
+            @ApiResponse(responseCode = "200", description = "Task deleted"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Task not found")
     })
@@ -100,7 +100,7 @@ public class TaskController {
                 @taskRepository.findById(#id).get().getAuthor().getEmail() == authentication.getName()
             """)
     @DeleteMapping(path = "/{id}")
-    public void deleteTask(@Parameter(description = "Id task to delete") @PathVariable final long id) {
+    public void deleteTask(@Parameter(description = "Id Task to delete") @PathVariable final long id) {
         taskRepository.deleteById(id);
     }
 

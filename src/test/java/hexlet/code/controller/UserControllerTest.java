@@ -135,7 +135,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void updateUserFail() throws Exception {
+    public void updateUserFails() throws Exception {
         userUtils.regDefaultUser();
         userUtils.regUser(userUtils.getTestRegistrationDto2());
 
@@ -175,7 +175,7 @@ public class UserControllerTest {
 
 
     @Test
-    public void deleteUserFails() throws Exception {
+    public void deleteUserFail() throws Exception {
         userUtils.regDefaultUser();
         userUtils.regUser(userUtils.getTestRegistrationDto2());
 

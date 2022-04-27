@@ -106,8 +106,8 @@ public class TaskControllerTest {
 
     @Test
     public void getTasksByPredicate() throws Exception {
-        long taskStatusId = taskStatusUtils.getTaskStatusByName().getId();
-        final String queryString = "?taskStatus=" + taskStatusId;
+        long taskId = taskStatusUtils.getTaskStatusByName().getId();
+        final String queryString = "?taskStatus=" + taskId;
         final var response = testUtils.perform(get("/tasks" + queryString))
                 .andExpect(status().isOk())
                 .andReturn()
@@ -118,18 +118,14 @@ public class TaskControllerTest {
 
         final Task task = tasks.get(0);
         assertThat(task.getTaskStatus().getId())
-                .isEqualTo(taskStatusRepository.findById(taskStatusId).get().getId());
-//        assertThat(task.getExecutor().getId())
-//                .isEqualTo(userRepository.findById(Long.parseLong("1")).get().getId());
-//        assertThat(task.getLabels().get(0).getId())
-//                .isEqualTo(labelRepository.findById(Long.parseLong("2")).get().getId());
+                .isEqualTo(taskStatusRepository.findById(taskId).get().getId());
 
     }
 
     @Test
     public void getTaskStatusById() throws Exception {
-        final Long id = taskRepository.findByName(TEST_TASK_NAME).get().getId();
-        final var response = testUtils.perform(get("/tasks/{id}", id))
+        final Long taskId = taskRepository.findByName(TEST_TASK_NAME).get().getId();
+        final var response = testUtils.perform(get("/tasks/{id}", taskId))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -148,8 +144,8 @@ public class TaskControllerTest {
 
     @Test
     public void getTaskByIdFail() throws Exception {
-        final Long id = Long.parseLong("100");
-        final var response = testUtils.perform(get("/tasks/{id}", id))
+        final Long taskId = Long.parseLong("100");
+        final var response = testUtils.perform(get("/tasks/{id}", taskId))
                 .andExpect(status().isNotFound())
                 .andReturn()
                 .getResponse();
@@ -178,7 +174,7 @@ public class TaskControllerTest {
     }
 
     @Test
-    public void createTaskFail() throws Exception {
+    public void createTaskFails() throws Exception {
         assertThat(taskRepository.count()).isEqualTo(2);
 
         TaskDto taskDto = TaskDto.builder()
@@ -225,22 +221,22 @@ public class TaskControllerTest {
                 .labelIds(List.of(labelUtils.getTaskStatusByName().getId()))
                 .build();
 
-        final Long idTask = taskRepository.findByName(TEST_TASK_NAME2).get().getId();
+        final Long taskId = taskRepository.findByName(TEST_TASK_NAME2).get().getId();
 
-        final var request = put("/tasks/{id}", idTask)
+        final var request = put("/tasks/{id}", taskId)
                 .content(asJson(taskDto))
                 .contentType(APPLICATION_JSON);
 
         testUtils.perform(request, TEST_USERNAME).andExpect(status().isOk());
 
-        assertTrue(taskRepository.existsById(idTask));
+        assertTrue(taskRepository.existsById(taskId));
         assertNull(taskRepository.findByName(TEST_TASK_NAME2).orElse(null));
         assertNotNull(taskRepository.findByName(TEST_TASK_NAME3).orElse(null));
 
     }
 
     @Test
-    public void updateTaskFail() throws Exception {
+    public void updateTaskFails() throws Exception {
 
 
         TaskDto taskDto = TaskDto.builder()
@@ -250,9 +246,9 @@ public class TaskControllerTest {
                 .executorId(Long.parseLong("100"))
                 .build();
 
-        final Long idTask = taskRepository.findByName(TEST_TASK_NAME2).get().getId();
+        final Long taskId = taskRepository.findByName(TEST_TASK_NAME2).get().getId();
 
-        final var request = put("/tasks/{id}", idTask)
+        final var request = put("/tasks/{id}", taskId)
                 .content(asJson(taskDto))
                 .contentType(APPLICATION_JSON);
 
@@ -266,7 +262,7 @@ public class TaskControllerTest {
                 .labelIds(List.of(labelUtils.getTaskStatusByName().getId()))
                 .build();
 
-        final var request2 = put("/tasks/{id}", idTask)
+        final var request2 = put("/tasks/{id}", taskId)
                 .content(asJson(taskDto2))
                 .contentType(APPLICATION_JSON);
 
@@ -278,8 +274,8 @@ public class TaskControllerTest {
     void taskDeleteById() throws Exception {
 
         assertEquals(2, taskRepository.count());
-        final Long idTask = taskRepository.findByName(TEST_TASK_NAME2).get().getId();
-        final var response = testUtils.perform(delete("/tasks/{id}", idTask),
+        final Long taskId = taskRepository.findByName(TEST_TASK_NAME2).get().getId();
+        final var response = testUtils.perform(delete("/tasks/{id}", taskId),
                         TEST_USERNAME)
                 .andExpect(status().isOk())
                 .andReturn()
@@ -289,10 +285,10 @@ public class TaskControllerTest {
     }
 
     @Test
-    void taskDeleteByIdFail() throws Exception {
+    void taskDeleteByIdFails() throws Exception {
         assertEquals(2, taskRepository.count());
-        final Long idTask = Long.parseLong("100");
-        final var response = testUtils.perform(delete("/tasks/{id}", idTask),
+        final Long taskId = Long.parseLong("100");
+        final var response = testUtils.perform(delete("/tasks/{id}", taskId),
                         TEST_USERNAME)
                 .andExpect(status().isNotFound())
                 .andReturn()
@@ -300,7 +296,7 @@ public class TaskControllerTest {
 
         assertEquals(2, taskRepository.count());
 
-        final var response2 = testUtils.perform(delete("/tasks/{id}", idTask))
+        final var response2 = testUtils.perform(delete("/tasks/{id}", taskId))
                 .andExpect(status().isUnauthorized())
                 .andReturn()
                 .getResponse();

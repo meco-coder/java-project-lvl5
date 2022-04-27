@@ -42,6 +42,7 @@ dependencies {
     implementation 'org.springdoc:springdoc-openapi-ui:1.6.7'
     implementation 'javax.servlet:javax.servlet-api:4.0.1'
     compileOnly 'org.projectlombok:lombok'
+
     annotationProcessor(
             'org.projectlombok:lombok:1.18.22',
             'com.querydsl:querydsl-apt:5.0.0:jpa',

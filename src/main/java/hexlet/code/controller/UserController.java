@@ -40,7 +40,7 @@ public class UserController {
     private UserRepository userRepository;
 
 
-    @Operation(summary = "Get all users")
+    @Operation(summary = "Get all Users")
     @ApiResponses(@ApiResponse(responseCode = "200", content =
     @Content(schema = @Schema(implementation = User.class))
     ))
@@ -49,10 +49,10 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @Operation(summary = "Get user by id")
+    @Operation(summary = "Get User by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "user found"),
-            @ApiResponse(responseCode = "500", description = "user with that id not found")
+            @ApiResponse(responseCode = "200", description = "User found"),
+            @ApiResponse(responseCode = "404", description = "User with that id not found")
     })
     @GetMapping(path = "/{id}")
     public User getUser(@Parameter(description = "User id") @PathVariable final long id) {

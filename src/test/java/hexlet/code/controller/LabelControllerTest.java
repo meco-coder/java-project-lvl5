@@ -155,26 +155,26 @@ public class LabelControllerTest {
     @Test
     public void updateLabel() throws Exception {
 
-        final Long idLabel = labelRepository.findByName(labelUtils.getTestRegistrationDto().getName())
+        final Long labelId = labelRepository.findByName(labelUtils.getTestRegistrationDto().getName())
                 .get()
                 .getId();
-        final var updateRequest = put("/labels/{id}", idLabel)
+        final var updateRequest = put("/labels/{id}", labelId)
                 .content(asJson(TEST_LABEL3))
                 .contentType(APPLICATION_JSON);
 
         testUtils.perform(updateRequest, TEST_USERNAME).andExpect(status().isOk());
 
-        assertTrue(labelRepository.existsById(idLabel));
+        assertTrue(labelRepository.existsById(labelId));
         assertNull(labelRepository.findByName(TEST_LABEL).orElse(null));
         assertNotNull(labelRepository.findByName(TEST_LABEL3).orElse(null));
     }
 
     @Test
-    public void updateLabelFail() throws Exception {
-        final Long idLabel = labelRepository.findByName(labelUtils.getTestRegistrationDto().getName())
+    public void updateLabelFails() throws Exception {
+        final Long labelId = labelRepository.findByName(labelUtils.getTestRegistrationDto().getName())
                 .get()
                 .getId();
-        final var updateRequest = put("/labels/{id}", idLabel)
+        final var updateRequest = put("/labels/{id}", labelId)
                 .content(asJson(""))
                 .contentType(APPLICATION_JSON);
 
@@ -182,7 +182,7 @@ public class LabelControllerTest {
 
         assertEquals(2, labelRepository.count());
 
-        final var updateRequest2 = put("/labels/{id}", idLabel)
+        final var updateRequest2 = put("/labels/{id}", labelId)
                 .content(asJson(TEST_LABEL3))
                 .contentType(APPLICATION_JSON);
 
@@ -192,10 +192,10 @@ public class LabelControllerTest {
     @Test
     void labelDeleteById() throws Exception {
         assertEquals(2, labelRepository.count());
-        final Long idLabel = labelRepository.findByName(labelUtils.getTestRegistrationDto().getName())
+        final Long labelId = labelRepository.findByName(labelUtils.getTestRegistrationDto().getName())
                 .get()
                 .getId();
-        final var response = testUtils.perform(delete("/labels/{id}", idLabel),
+        final var response = testUtils.perform(delete("/labels/{id}", labelId),
                         TEST_USERNAME)
                 .andExpect(status().isOk())
                 .andReturn()
@@ -205,11 +205,11 @@ public class LabelControllerTest {
     }
 
     @Test
-    void labelDeleteByIdFail() throws Exception {
+    void labelDeleteByIdFails() throws Exception {
 
         assertEquals(2, labelRepository.count());
-        final Long idLabel = Long.parseLong("100");
-        final var response = testUtils.perform(delete("/labels/{id}", idLabel),
+        final Long labelId = Long.parseLong("100");
+        final var response = testUtils.perform(delete("/labels/{id}", labelId),
                         TEST_USERNAME)
                 .andExpect(status().isInternalServerError())
                 .andReturn()
@@ -217,7 +217,7 @@ public class LabelControllerTest {
 
         assertEquals(2, labelRepository.count());
 
-        final var response2 = testUtils.perform(delete("/labels/{id}", idLabel))
+        final var response2 = testUtils.perform(delete("/labels/{id}", labelId))
                 .andExpect(status().isUnauthorized())
                 .andReturn()
                 .getResponse();

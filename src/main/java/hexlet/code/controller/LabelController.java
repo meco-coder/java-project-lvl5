@@ -49,21 +49,21 @@ public class LabelController {
     }
 
     @SecurityRequirement(name = "java_project")
-    @Operation(summary = "Get label by id")
+    @Operation(summary = "Get Label by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "label found"),
-            @ApiResponse(responseCode = "404", description = "label with that id not found")
+            @ApiResponse(responseCode = "200", description = "Label found"),
+            @ApiResponse(responseCode = "404", description = "Label with that id not found")
     })
     @GetMapping(path = "/{id}")
-    public Label getLabel(@Parameter(description = "label id") @PathVariable final long id) {
+    public Label getLabel(@Parameter(description = "Label id") @PathVariable final long id) {
         return labelRepository.findById(id).get();
     }
 
     @SecurityRequirement(name = "java_project")
-    @Operation(summary = "Create new label")
+    @Operation(summary = "Create new Label")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Label created"),
-            @ApiResponse(responseCode = "422", description = "incorrect label data"),
+            @ApiResponse(responseCode = "422", description = "incorrect Label data"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @PostMapping(path = "")
@@ -76,29 +76,29 @@ public class LabelController {
     }
 
     @SecurityRequirement(name = "java_project")
-    @Operation(summary = "Update label by id")
+    @Operation(summary = "Update Label by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "label updated"),
-            @ApiResponse(responseCode = "422", description = "incorrect label data"),
+            @ApiResponse(responseCode = "200", description = "Label updated"),
+            @ApiResponse(responseCode = "422", description = "incorrect Label data"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "label not found")
+            @ApiResponse(responseCode = "404", description = "Label not found")
     })
     @PutMapping(path = "/{id}")
-    public Label updateTask(@Parameter(description = "Id label to update") @PathVariable final long id,
+    public Label updateTask(@Parameter(description = "Id Label to update") @PathVariable final long id,
                             @Parameter(description = "Label data to update")
                             @RequestBody @Valid LabelDto labelDto) {
         return labelService.updateLabel(id, labelDto);
     }
 
     @SecurityRequirement(name = "java_project")
-    @Operation(summary = "Delete label by id")
+    @Operation(summary = "Delete Label by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Label deleted"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
             @ApiResponse(responseCode = "404", description = "Label not found")
     })
     @DeleteMapping(path = "/{id}")
-    public void deleteLabel(@Parameter(description = "Id label to delete") @PathVariable final long id) {
+    public void deleteLabel(@Parameter(description = "Id Label to delete") @PathVariable final long id) {
         labelRepository.deleteById(id);
     }
 

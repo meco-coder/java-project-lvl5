@@ -93,8 +93,8 @@ public class TaskStatusControllerTest {
 
     @Test
     public void getTaskStatusById() throws Exception {
-        final Long id = taskStatusUtils.getTaskStatusByName().getId();
-        final var response = testUtils.perform(get("/statuses/{id}", id))
+        final Long taskStatusId = taskStatusUtils.getTaskStatusByName().getId();
+        final var response = testUtils.perform(get("/statuses/{id}", taskStatusId))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
@@ -106,8 +106,8 @@ public class TaskStatusControllerTest {
 
     @Test
     public void getTaskStatusByIdFail() throws Exception {
-        final Long id = Long.parseLong("100");
-        final var response = testUtils.perform(get("/statuses/{id}", id))
+        final Long taskStatusId = Long.parseLong("100");
+        final var response = testUtils.perform(get("/statuses/{id}", taskStatusId))
                 .andExpect(status().isNotFound())
                 .andReturn()
                 .getResponse();
@@ -123,7 +123,7 @@ public class TaskStatusControllerTest {
     }
 
     @Test
-    public void createTaskStatusFail() throws Exception {
+    public void createTaskStatusFails() throws Exception {
         assertEquals(2, taskStatusRepository.count());
         taskStatusUtils.regTaskStatus(new TaskStatusDto(""), TEST_USERNAME)
                 .andExpect(status()
@@ -141,27 +141,22 @@ public class TaskStatusControllerTest {
 
     @Test
     public void updateTaskStatus() throws Exception {
-
-        final Long idTaskStatus = taskStatusRepository.findByName(taskStatusUtils.getTestRegistrationDto().getName())
-                .get()
-                .getId();
-        final var updateRequest = put("/statuses/{id}", idTaskStatus)
+        final Long taskStatusId = taskStatusUtils.getTaskStatusByName().getId();
+        final var updateRequest = put("/statuses/{id}", taskStatusId)
                 .content(asJson(TEST_TASK_STATUS3))
                 .contentType(APPLICATION_JSON);
 
         testUtils.perform(updateRequest, TEST_USERNAME).andExpect(status().isOk());
 
-        assertTrue(taskStatusRepository.existsById(idTaskStatus));
+        assertTrue(taskStatusRepository.existsById(taskStatusId));
         assertNull(taskStatusRepository.findByName(TEST_TASK_STATUS).orElse(null));
         assertNotNull(taskStatusRepository.findByName(TEST_TASK_STATUS3).orElse(null));
     }
 
     @Test
-    public void updateTaskStatusFail() throws Exception {
-        final Long idTaskStatus = taskStatusRepository.findByName(taskStatusUtils.getTestRegistrationDto().getName())
-                .get()
-                .getId();
-        final var updateRequest = put("/statuses/{id}", idTaskStatus)
+    public void updateTaskStatusFails() throws Exception {
+        final Long taskStatusId = taskStatusUtils.getTaskStatusByName().getId();
+        final var updateRequest = put("/statuses/{id}", taskStatusId)
                 .content(asJson(""))
                 .contentType(APPLICATION_JSON);
 
@@ -169,7 +164,7 @@ public class TaskStatusControllerTest {
 
         assertEquals(2, taskStatusRepository.count());
 
-        final var updateRequest2 = put("/statuses/{id}", idTaskStatus)
+        final var updateRequest2 = put("/statuses/{id}", taskStatusId)
                 .content(asJson(TEST_TASK_STATUS3))
                 .contentType(APPLICATION_JSON);
 
@@ -180,10 +175,8 @@ public class TaskStatusControllerTest {
     void taskStatusDeleteById() throws Exception {
 
         assertEquals(2, taskStatusRepository.count());
-        final Long idTaskStatus = taskStatusRepository.findByName(taskStatusUtils.getTestRegistrationDto().getName())
-                .get()
-                .getId();
-        final var response = testUtils.perform(delete("/statuses/{id}", idTaskStatus),
+        final Long taskStatusId = taskStatusUtils.getTaskStatusByName().getId();
+        final var response = testUtils.perform(delete("/statuses/{id}", taskStatusId),
                         TEST_USERNAME)
                 .andExpect(status().isOk())
                 .andReturn()
@@ -193,10 +186,10 @@ public class TaskStatusControllerTest {
     }
 
     @Test
-    void taskStatusDeleteByIdFail() throws Exception {
+    void taskStatusDeleteByIdFails() throws Exception {
         assertEquals(2, taskStatusRepository.count());
-        final Long idTaskStatus = Long.parseLong("100");
-        final var response = testUtils.perform(delete("/statuses/{id}", idTaskStatus),
+        final Long taskStatusId = Long.parseLong("100");
+        final var response = testUtils.perform(delete("/statuses/{id}", taskStatusId),
                         TEST_USERNAME)
                 .andExpect(status().isInternalServerError())
                 .andReturn()
@@ -204,7 +197,7 @@ public class TaskStatusControllerTest {
 
         assertEquals(2, taskStatusRepository.count());
 
-        final var response2 = testUtils.perform(delete("/statuses/{id}", idTaskStatus))
+        final var response2 = testUtils.perform(delete("/statuses/{id}", taskStatusId))
                 .andExpect(status().isUnauthorized())
                 .andReturn()
                 .getResponse();

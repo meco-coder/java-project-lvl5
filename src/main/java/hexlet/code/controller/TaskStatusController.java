@@ -38,7 +38,7 @@ public class TaskStatusController {
     @Autowired
     private TaskStatusRepository taskStatusRepository;
 
-    @Operation(summary = "Get all task statuses")
+    @Operation(summary = "Get all Task Statuses")
     @ApiResponses(@ApiResponse(responseCode = "200", content =
     @Content(schema = @Schema(implementation = TaskStatus.class))
     ))
@@ -47,51 +47,51 @@ public class TaskStatusController {
         return taskStatusRepository.findAll();
     }
 
-    @Operation(summary = "Get task status by id")
+    @Operation(summary = "Get Task Status by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "task status found"),
-            @ApiResponse(responseCode = "404", description = "task status with that id not found")
+            @ApiResponse(responseCode = "200", description = "Task Status found"),
+            @ApiResponse(responseCode = "404", description = "Task Status with that id not found")
     })
     @GetMapping(path = "/{id}")
-    public TaskStatus getTaskStatus(@Parameter(description = "task status id") @PathVariable final long id) {
+    public TaskStatus getTaskStatus(@Parameter(description = "Task status id") @PathVariable final long id) {
         return taskStatusRepository.findById(id).get();
     }
     @SecurityRequirement(name = "java_project")
-    @Operation(summary = "Create new task status")
+    @Operation(summary = "Create new Task Status")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User created"),
-            @ApiResponse(responseCode = "422", description = "incorrect User data"),
+            @ApiResponse(responseCode = "201", description = "Task Status created"),
+            @ApiResponse(responseCode = "422", description = "incorrect Task Status data"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @PostMapping(path = "")
     @ResponseStatus(CREATED)
-    public TaskStatus createTaskStatus(@Parameter(description = "Task status data to save")
+    public TaskStatus createTaskStatus(@Parameter(description = "Task Status data to save")
                                        @RequestBody @Valid TaskStatusDto taskStatusDto) {
         return taskStatusServiceImpl.createNewTaskStatus(taskStatusDto);
     }
     @SecurityRequirement(name = "java_project")
-    @Operation(summary = "Update task status by id")
+    @Operation(summary = "Update Task Status by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "task status updated"),
-            @ApiResponse(responseCode = "422", description = "incorrect task status data"),
+            @ApiResponse(responseCode = "200", description = "Task Status updated"),
+            @ApiResponse(responseCode = "422", description = "incorrect Task Status data"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Task status not found")
+            @ApiResponse(responseCode = "404", description = "Task Status not found")
     })
     @PutMapping(path = "/{id}")
-    public TaskStatus updateTaskStatus(@Parameter(description = "Id task status to update") @PathVariable long id,
-                                       @Parameter(description = "Task status data to update")
+    public TaskStatus updateTaskStatus(@Parameter(description = "Id Task Status to update") @PathVariable long id,
+                                       @Parameter(description = "Task Status data to update")
                                        @RequestBody @Valid TaskStatusDto taskStatusDto) {
         return taskStatusServiceImpl.updateTaskStatus(id, taskStatusDto);
     }
     @SecurityRequirement(name = "java_project")
     @Operation(summary = "Delete task status by id")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "task status deleted"),
+            @ApiResponse(responseCode = "200", description = "Task Status deleted"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),
-            @ApiResponse(responseCode = "404", description = "Task status not found")
+            @ApiResponse(responseCode = "404", description = "Task Status not found")
     })
     @DeleteMapping(path = "/{id}")
-    public void deleteTaskStatus(@Parameter(description = "Id task status to delete")
+    public void deleteTaskStatus(@Parameter(description = "Id Task Status to delete")
                                  @PathVariable final long id) {
         taskStatusRepository.deleteById(id);
     }
