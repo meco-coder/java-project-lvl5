@@ -53,6 +53,7 @@ public class UserControllerTest {
     @Autowired
     private TestUserUtils userUtils;
 
+
     @AfterEach
     public void clear() {
         utils.tearDown();
@@ -84,6 +85,33 @@ public class UserControllerTest {
         });
 
         assertThat(users).hasSize(1);
+    }
+
+    @Test
+    public void getUserById() throws Exception {
+        userUtils.regDefaultUser();
+        Long UserId = userRepository.findByEmail(TEST_USERNAME).get().getId();
+        final var response = utils.perform(get("/users/{id}", UserId))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse();
+
+        final User user = fromJson(response.getContentAsString(), new TypeReference<>() {
+        });
+
+        assertEquals(userRepository.findByEmail(TEST_USERNAME).get().getEmail(), user.getEmail());
+        assertEquals(userRepository.findByEmail(TEST_USERNAME).get().getId(), user.getId());
+        assertEquals(userRepository.findByEmail(TEST_USERNAME).get().getFirstName(), user.getFirstName());
+        assertEquals(userRepository.findByEmail(TEST_USERNAME).get().getLastName(), user.getLastName());
+    }
+
+    @Test
+    public void getUserByIdFail() throws Exception {
+
+        final var response = utils.perform(get("/users/{id}", Long.parseLong("100")))
+                .andExpect(status().isNotFound())
+                .andReturn()
+                .getResponse();
     }
 
 
