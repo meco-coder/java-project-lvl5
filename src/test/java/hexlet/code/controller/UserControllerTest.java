@@ -90,8 +90,8 @@ public class UserControllerTest {
     @Test
     public void getUserById() throws Exception {
         userUtils.regDefaultUser();
-        Long UserId = userRepository.findByEmail(TEST_USERNAME).get().getId();
-        final var response = utils.perform(get("/users/{id}", UserId))
+        Long userId = userRepository.findByEmail(TEST_USERNAME).get().getId();
+        final var response = utils.perform(get("/users/{id}", userId))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse();
