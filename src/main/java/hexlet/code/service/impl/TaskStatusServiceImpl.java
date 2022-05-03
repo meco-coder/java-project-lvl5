@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -29,11 +29,12 @@ public class TaskStatusServiceImpl implements TaskStatusService {
 
     @Override
     public TaskStatus updateTaskStatus(long id, TaskStatusDto taskStatusDto) {
-        List<TaskStatus> updateTaskStatus = taskStatusRepository.findById(id).stream()
-                .peek(x -> {
-                    x.setName(taskStatusDto.getName());
-                }).toList();
+        Optional<TaskStatus> updateTaskStatus = taskStatusRepository.findById(id);
+        updateTaskStatus.map(x -> {
+            x.setName(taskStatusDto.getName());
+            return updateTaskStatus;
+        });
 
-        return taskStatusRepository.save(updateTaskStatus.get(0));
+        return taskStatusRepository.save(updateTaskStatus.get());
     }
 }

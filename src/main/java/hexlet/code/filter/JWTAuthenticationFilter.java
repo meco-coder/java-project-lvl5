@@ -1,10 +1,10 @@
 package hexlet.code.filter;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.component.JWTHelper;
 import hexlet.code.dto.LoginDto;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -36,7 +36,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(final HttpServletRequest request,
                                                 final HttpServletResponse response) throws AuthenticationException {
-        final LoginDto loginData = getLoginData(request);
+        final LoginDto loginData;
+        try {
+            loginData = getLoginData(request);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         final var authRequest = new UsernamePasswordAuthenticationToken(
                 loginData.getEmail(),
                 loginData.getPassword()
@@ -45,15 +50,12 @@ public class JWTAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         return getAuthenticationManager().authenticate(authRequest);
     }
 
-    private LoginDto getLoginData(final HttpServletRequest request) throws AuthenticationException {
-        try {
-            final String json = request.getReader()
-                    .lines()
-                    .collect(Collectors.joining());
-            return MAPPER.readValue(json, LoginDto.class);
-        } catch (IOException e) {
-            throw new BadCredentialsException("Can't extract login data from request");
-        }
+    private LoginDto getLoginData(final HttpServletRequest request) throws AuthenticationException, IOException {
+        MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        final String json = request.getReader()
+                .lines()
+                .collect(Collectors.joining());
+        return MAPPER.readValue(json, LoginDto.class);
     }
 
     @Override

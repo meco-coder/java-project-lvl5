@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -41,26 +42,27 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public Task updateTask(long id, TaskDto taskDto) {
-        List<Task> updateTask = taskRepository.findById(id).stream()
-                .peek(x -> {
-                    x.setName(taskDto.getName());
-                    if (taskDto.getDescription() != null) {
-                        x.setDescription(taskDto.getDescription());
-                    }
-                    x.setTaskStatus(taskStatusRepository.findById(taskDto.getTaskStatusId()).get());
-                    if (taskDto.getExecutorId() != 0) {
-                        x.setExecutor(userRepository.findById(taskDto.getExecutorId()).get());
-                    }
-                }).toList();
+        Optional<Task> updateTask = taskRepository.findById(id);
+        updateTask.map(x -> {
+            x.setName(taskDto.getName());
+            if (taskDto.getDescription() != null) {
+                x.setDescription(taskDto.getDescription());
+            }
+            x.setTaskStatus(taskStatusRepository.findById(taskDto.getTaskStatusId()).get());
+            if (taskDto.getExecutorId() != 0) {
+                x.setExecutor(userRepository.findById(taskDto.getExecutorId()).get());
+            }
+            return updateTask;
+        });
 
         List<Label> labels = new ArrayList<>();
-        for (Object labelId: taskDto.getLabelIds()) {
+        for (Object labelId : taskDto.getLabelIds()) {
             labels.add(labelRepository.findById((Long.parseLong(String.valueOf(labelId)))).get());
         }
-        updateTask.get(0).setLabels(labels);
+        updateTask.get().setLabels(labels);
 
 
-        return taskRepository.save(updateTask.get(0));
+        return taskRepository.save(updateTask.get());
     }
 
     @Override
@@ -76,7 +78,7 @@ public class TaskServiceImpl implements TaskService {
             task.setExecutor(userRepository.findById(taskDto.getExecutorId()).get());
         }
         List<Label> labels = new ArrayList<>();
-        for (Object labelId: taskDto.getLabelIds()) {
+        for (Object labelId : taskDto.getLabelIds()) {
             labels.add(labelRepository.findById((Long.parseLong(String.valueOf(labelId)))).get());
         }
         task.setLabels(labels);

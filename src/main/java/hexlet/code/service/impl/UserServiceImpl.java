@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 import static hexlet.code.config.security.SecurityConfig.DEFAULT_AUTHORITIES;
 
@@ -46,16 +47,15 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Override
     public User updateUser(long id, UserDto userDto) {
-        List<User> updateUser = userRepository.findById(id).stream()
-                .peek(x -> {
-                    x.setFirstName(userDto.getFirstName());
-                    x.setLastName(userDto.getLastName());
-                    x.setEmail(userDto.getEmail());
-                    x.setPassword(passwordEncoder.encode(userDto.getPassword()));
-
-                }).toList();
-
-        return userRepository.save(updateUser.get(0));
+        Optional<User> updateUser = userRepository.findById(id);
+        updateUser.map(x -> {
+            x.setFirstName(userDto.getFirstName());
+            x.setLastName(userDto.getLastName());
+            x.setEmail(userDto.getEmail());
+            x.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            return updateUser;
+        });
+        return userRepository.save(updateUser.get());
     }
 
     @Override
